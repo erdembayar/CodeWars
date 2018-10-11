@@ -52,6 +52,43 @@ namespace CodeWars
             Console.WriteLine(GoodVsEvil("1 1 1 1 1 1", "1 1 1 1 1 1 1"));
             Console.WriteLine(GoodVsEvil("0 0 0 0 0 10", "0 1 1 1 1 0 0"));
             Console.WriteLine(GoodVsEvil("1 0 0 0 0 0", "1 0 0 0 0 0 0"));
+
+            foreach (var v in sqInRect(5, 3))
+            {
+                Console.WriteLine(v);
+            }
+
+            foreach (var v in sqInRect(5, 5))
+            {
+                Console.WriteLine(v);
+            }
+
+            Console.ReadKey();
+        }
+
+
+        public static List<int> sqInRect(int lng, int wdth)
+        {
+            var result = new List<int>();
+            //Simple greeedy algorithm
+            if (lng == wdth)
+                return null;
+            while (lng > 0 && wdth > 0)
+            {
+                
+                if (lng > wdth)
+                {
+                    result.Add(wdth);
+                    lng -= wdth;
+                }
+                else
+                {
+                    result.Add(lng);
+                    wdth -= lng;
+                }
+            }
+
+            return result;
         }
 
         public static string GoodVsEvil(string good, string evil)
