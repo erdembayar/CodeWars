@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -59,10 +58,10 @@ namespace CodeWars
                 Console.WriteLine(v);
             }
 
-            foreach (var v in sqInRect(5, 5))
-            {
-                Console.WriteLine(v);
-            }
+//            foreach (var v in sqInRect(5, 5))
+//            {
+//                Console.WriteLine(v);
+//            }
 
             Console.WriteLine(perimeter(5));
             Console.WriteLine(perimeter(7));
@@ -77,9 +76,176 @@ namespace CodeWars
             //            Console.WriteLine(NextSmaller(907));
             //            Console.WriteLine(NextSmaller(123456798));
             //            Console.WriteLine(NextSmaller(29009));
+
+            Console.WriteLine(formatDuration(0));
+            Console.WriteLine(formatDuration(1));
+            Console.WriteLine(formatDuration(62));
+            Console.WriteLine(formatDuration(120));
+            Console.WriteLine(formatDuration(3662));
+
+            //            Console.WriteLine(MixedFraction("-22/-7"));
+//            Console.WriteLine(MixedFraction("-195595/564071"));
+//            Console.WriteLine(MixedFraction("195595/-564071"));
+            //            Console.WriteLine(MixedFraction("-3/10"));
+            //            Console.WriteLine(MixedFraction("42/9"));
+            //            Console.WriteLine(MixedFraction("6/3"));
+            //            Console.WriteLine(MixedFraction("4/6"));
+            //            Console.WriteLine(MixedFraction("0/189"));
+            //            Console.WriteLine(MixedFraction("-10/7"));
+            Console.WriteLine(MixedFraction("44/55"));
             Console.ReadKey();
         }
+        public static string MixedFraction(string s)
+        {
+            List<int> Divider(int n)
+            {
+                var dividers = new List<int>();
+                for (int i = 2; i <= Math.Sqrt(n); i++)
+                {
+                    int j = n / i;
+                    if (j * i == n)
+                    {
+                        dividers.Add(i);
+                        dividers.Add(j);
+                    }
+                }
 
+                return dividers;
+            }
+
+            var numbers = s.Split('/');
+            var x = int.Parse(numbers[0]);
+            var y = int.Parse(numbers[1]);
+            if (y == 0)
+                throw new DivideByZeroException();
+
+            if (x == 0)
+                return "0";
+
+            bool negative = false;
+            if ((x < 0 && y>0) || (x>0 && y<0))
+            {
+                negative = true;
+            }
+            int a = Math.Abs(x / y);
+
+            var result = a != 0 ? a.ToString() : string.Empty;
+            if (negative && a!=0)
+            {
+                result = "-" + result;
+            }
+
+            x = Math.Abs(x);
+            y = Math.Abs(y);
+            x %= y;
+            if (x == 0)
+            {
+                return result.Trim();
+            }
+
+            var yDividers = Divider(y);
+            int maxCommonDivider = 0;
+
+
+            foreach (var divider in yDividers)
+            {
+                int xDivisor = x / divider;
+                if ((xDivisor * divider == x) && divider > maxCommonDivider)
+                {
+                    maxCommonDivider = divider;
+                }
+
+               
+            }
+
+            if (maxCommonDivider > 0)
+            {
+                result += $" {x / maxCommonDivider}/{y / maxCommonDivider}";
+            }
+            else
+            {
+                result += $" {x}/{y}";
+            }
+
+            if (negative && a == 0)
+            {
+                result = "-" + result.Trim();
+            }
+            return result.Trim();
+        }
+        public static string formatDuration(int seconds)
+        {
+            if (seconds == 0)
+                return "now";
+            string secondsStr = String.Empty;
+            string minStr = String.Empty;
+            string hourStr = String.Empty;
+            string dayStr = String.Empty;
+            string monthStr = String.Empty;
+            string yearStr = String.Empty;
+
+            int secondsRem = seconds % 60;
+            
+            if (secondsRem > 0)
+            {
+                secondsStr = $"{secondsRem} second";
+                secondsStr += secondsRem > 1 ? "s" : String.Empty;
+            }
+            int mins = seconds / 60;
+            mins %= 60;
+            if (mins > 0)
+            {
+                minStr = $"{mins} minute";
+                minStr += mins > 1 ? "s" : String.Empty;
+            }
+            int hours = seconds / 3600;
+            hours %= 24;
+            if (hours > 0)
+            {
+                hourStr = $"{hours} hour";
+                hourStr += hours > 1 ? "s" : String.Empty;
+            }
+            int days = seconds / (24*3600);
+            days %= 365;
+            if (days > 0)
+            {
+                dayStr = $"{days} day";
+                dayStr += days > 1 ? "s" : String.Empty;
+            }
+
+            int years = seconds / (365 * 24 * 3600);
+            if (years > 0)
+            {
+                yearStr = $"{years} year";
+                yearStr += years > 1 ? "s" : String.Empty;
+            }
+            var list = new List<String>(){yearStr, dayStr, hourStr, minStr, secondsStr};
+
+            var result = String.Empty;
+            foreach (var l in list)
+            {
+                if(l!= String.Empty)
+                {
+                    result += (l + ", ");
+                }
+            }
+
+            if (result.EndsWith(", "))
+            {
+                var end = result.LastIndexOf(", ", StringComparison.CurrentCulture);
+                if (end >= 0)
+                {
+                    result = result.Substring(0, end);
+                }
+            }
+
+            var end2 = result.LastIndexOf(", ", StringComparison.CurrentCulture);
+            if (end2 >= 0 && end2 < result.Length-2)
+            {
+                result = result.Substring(0, end2) + " and "+ result.Substring(end2+2,result.Length-end2-2);
+            }
+            return result.Trim();
+        }
 
         public static int TrailingZeros(int n)
         {
